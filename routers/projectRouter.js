@@ -43,7 +43,7 @@ router.get('/:id', (req, res) => {
 });
 ////////////////////////////////////////////
 
-router.get('/:id/actions', validateProjectId, (req, res) => {
+router.get('/:id/actions', (req, res) => {
     const { id } = req.params;
     Projects.getProjectActions(id)
         .then(data => {
@@ -99,21 +99,23 @@ router.put('/:id', validateProjectId, (req, res) => {
 //custom middleware
 
 function validateProjectId(req, res, next) {
-    
-    Projects.get(req.params.id)
+    const id = req.params.id;
+    Projects.get(id)
         .then(data => {
             if (!data) {
                 return res.status(400).json({
                     errorMessage: "invalid project id"
                 });
+            } else {
+                next();
             }
         })
         .catch(error => {
+            console.log(error);
             return res.status(500).json({
-                errorMessage: "The action information could not be retrieved."
+                errorMessage: "The project information could not be retrieved."
             });
         })
-    //next();
 }
 
 function validateProject(req, res, next) {
